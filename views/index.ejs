@@ -12,8 +12,7 @@
 var sio = io.connect(), socket = sio.socket.of('/chat');
 socket
 .on('connect', function () {
-  // at connection, first send my username
-  socket.emit('user', <%- JSON.stringify(username) %>);
+  // I'm connected
 })
 .on('join', function (username, time) {
   // someone joined room
