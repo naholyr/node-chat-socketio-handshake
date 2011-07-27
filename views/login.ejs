@@ -1,0 +1,6 @@
+<p>You need to be logged in, bastard!</p>
+<% if (error) { %><p>Erreur: <%= error %></p><% } %>
+<form method="post">
+  <input type="text" name="username" placeholder="Type your login" autofocus required<% if (username) { %> value="<%= username %>"<% } %>>
+  <input type="submit">
+</form>
