@@ -129,21 +129,35 @@ sockets.authorization(function (handshakeData, callback) {
 // Active sockets by session
 var connections = {};
 sockets.on('connection', function (socket) { // New client
-  if ('undefined' == typeof connections[socket.handshake.sessionID]) {
-    connections[socket.handshake.sessionID] = { "length": 0 };
+  var sessionID = socket.handshake.sessionID; // Store session ID from handshake
+  // this is required if we want to access this data when user leaves, as handshake is
+  // not available in "disconnect" event.
+  var username = socket.handshake.username; // Same here, to allow event "bye" with username
+  if ('undefined' == typeof connections[sessionID]) {
+    connections[sessionID] = { "length": 0 };
     // First connection
-    sockets.emit('join', socket.handshake.username, Date.now());
+    sockets.emit('join', username, Date.now());
   }
   // Add connection to pool
-  connections[socket.handshake.sessionID][socket.id] = socket;
-  connections[socket.handshake.sessionID].length ++;
+  connections[sessionID][socket.id] = socket;
+  connections[sessionID].length ++;
   // When user leaves
   socket.on('disconnect', function () {
-    sockets.emit('bye', socket.handshake.username, Date.now());
+    // Is this socket associated to user session ?
+    var userConnections = connections[sessionID];
+    if (userConnections.length && userConnections[socket.id]) {
+      // Forget this socket
+      userConnections.length --;
+      delete userConnections[socket.id];
+    }
+    if (userConnections.length == 0) {
+      // No more active sockets for this user: say bye
+      sockets.emit('bye', username, Date.now());
+    }
   });
   // New message from client = "write" event
   socket.on('write', function (message) {
-    sockets.emit('message', socket.handshake.username, message, Date.now());
+    sockets.emit('message', username, message, Date.now());
   });
 });
 
