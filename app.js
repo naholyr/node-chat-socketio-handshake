@@ -126,8 +126,17 @@ sockets.authorization(function (handshakeData, callback) {
     });
   }
 });
+// Active sockets by session
+var connections = {};
 sockets.on('connection', function (socket) { // New client
-  sockets.emit('join', socket.handshake.username, Date.now());
+  if ('undefined' == typeof connections[socket.handshake.sessionID]) {
+    connections[socket.handshake.sessionID] = { "length": 0 };
+    // First connection
+    sockets.emit('join', socket.handshake.username, Date.now());
+  }
+  // Add connection to pool
+  connections[socket.handshake.sessionID][socket.id] = socket;
+  connections[socket.handshake.sessionID].length ++;
   // When user leaves
   socket.on('disconnect', function () {
     sockets.emit('bye', socket.handshake.username, Date.now());
