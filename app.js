@@ -79,7 +79,8 @@ app.post("/login", function (req, res) {
       if (!err) {
         var found = false;
         for (var i=0; i<sessions.length; i++) {
-          if (sessions[i].username == req.body.username) {
+          var session = JSON.parse(sessions[i]);
+          if (session.username == req.body.username) {
             err = "User name already used by someone else";
             found = true;
             break;
