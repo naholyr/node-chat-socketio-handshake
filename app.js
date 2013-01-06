@@ -1,8 +1,13 @@
 const path = require('path')
     , express = require('express')
-    , app = module.exports = express()
+    , app = express()
+    , http = require('http')
+    , server = http.createServer(app)
     , port = process.env.PORT || 1337
     ;
+
+// Public API: distinct app (Express) and actual server (HttpServer)
+module.exports = { app: app, server: server };
 
 /** Configuration */
 app.configure(function() {
@@ -99,7 +104,7 @@ app.post("/login", function (req, res) {
 });
 
 /** WebSocket */
-var sockets = require('socket.io').listen(app).of('/chat');
+var sockets = require('socket.io').listen(server).of('/chat');
 const parseCookie = require('connect').utils.parseCookie;
 sockets.authorization(function (handshakeData, callback) {
   // Read cookies from handshake headers
@@ -164,7 +169,7 @@ sockets.on('connection', function (socket) { // New client
 
 /** Start server */
 if (!module.parent) {
-  require('http').createServer(app).listen(port, function () {
+  server.listen(port, function () {
     console.log('Listening', this.address());
   })
 }
