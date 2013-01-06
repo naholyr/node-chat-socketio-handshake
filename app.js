@@ -5,6 +5,8 @@ const path = require('path')
     , http = require('http')
     , server = http.createServer(app)
     , port = process.env.PORT || 1337
+    , sessionStore = new express.session.MemoryStore({ reapInterval: 60000 * 10 })
+    , sessionSecret = "some private string"
     ;
 
 // Public API: distinct app (Express) and actual server (HttpServer)
@@ -21,12 +23,7 @@ app.configure(function() {
   // Session management
   // Internal session data storage engine, this is the default engine embedded with connect.
   // Much more can be found as external modules (Redis, Mongo, Mysql, file...). look at "npm search connect session store"
-  this.sessionStore = new express.session.MemoryStore({ reapInterval: 60000 * 10 });
-  this.use(express.session({
-    // Private crypting key
-    "secret": "some private string",
-    "store":  this.sessionStore
-  }));
+  this.use(express.session({ "secret": sessionSecret, "store": sessionStore }));
   // Allow parsing form data
   this.use(express.bodyParser());
 });
@@ -82,7 +79,7 @@ app.post("/login", function (req, res) {
     res.render("login", options);
   } else {
     // Validate if username is free
-    req.sessionStore.all(function (err, sessions) {
+    sessionStore.all(function (err, sessions) {
       if (!err) {
         var found = false;
         for (var i=0; i<sessions.length; i++) {
@@ -107,7 +104,6 @@ app.post("/login", function (req, res) {
 
 /** WebSocket */
 var sockets = require('socket.io').listen(server).of('/chat');
-const parseCookie = connect.utils.parseCookie;
 sockets.authorization(function (handshakeData, callback) {
   // Read cookies from handshake headers
   var cookies = parseCookie(handshakeData.headers.cookie);
@@ -121,7 +117,7 @@ sockets.authorization(function (handshakeData, callback) {
     // session with open sockets
     handshakeData.sessionID = sessionID;
     // On récupère la session utilisateur, et on en extrait son username
-    app.sessionStore.get(sessionID, function (err, session) {
+    sessionStore.get(sessionID, function (err, session) {
       if (!err && session && session.username) {
         // On stocke ce username dans les données de l'authentification, pour réutilisation directe plus tard
         handshakeData.username = session.username;
