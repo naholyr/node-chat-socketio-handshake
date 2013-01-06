@@ -12,10 +12,10 @@
     "node": ">= 0.4.0"
   },
   "dependencies": {
-    "express": "2.4.x",
-    "ejs": "0.4.x",
-    "socket.io": "0.7.x",
-    "connect": "1.6.x"
+    "express": "~3.0.6",
+    "ejs": "~0.8.3",
+    "socket.io": "~0.9.13",
+    "connect": "~2.7.2"
   },
   "devDependencies": {}
 }
