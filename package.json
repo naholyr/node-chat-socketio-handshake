@@ -15,7 +15,8 @@
     "express": "~3.0.6",
     "ejs": "~0.8.3",
     "socket.io": "~0.9.13",
-    "connect": "~2.7.2"
+    "connect": "~2.7.2",
+    "ejs-locals": "~1.0.2"
   },
   "devDependencies": {}
 }

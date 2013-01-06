@@ -1,3 +1,5 @@
+<% layout('layout') %>
+
 <p>Hello, <%= username %></p>
 
 <pre id="messages" style="max-height:300px; overflow:auto;"></pre>
@@ -5,7 +7,7 @@
   <input type="text" placeholder="Type your message" id="message-input" name="message" autofocus required>
   <input type="submit" value="OK">
 </form>
- 
+
 <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
 /** Socket */
@@ -30,7 +32,7 @@ socket
   // someone wrote a message
   addMessage(username, message, time);
 });
- 
+
 /** Form */
 var messageInput = document.getElementById('message-input');
 document.getElementById('message-form').onsubmit = function () {
@@ -38,7 +40,7 @@ document.getElementById('message-form').onsubmit = function () {
   messageInput.value = '';
   return false;
 }
- 
+
 /** Display */
 var messagesArea = document.getElementById('messages');
 function addMessage(username, message, time) {

@@ -11,6 +11,7 @@ module.exports = { app: app, server: server };
 
 /** Configuration */
 app.configure(function() {
+  this.engine('ejs', require('ejs-locals'));
   this.set('views', path.join(__dirname, 'views'));
   this.set('view engine', 'ejs');
   this.use(express.static(path.join(__dirname, '/public')));
