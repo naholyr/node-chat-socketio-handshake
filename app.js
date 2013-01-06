@@ -1,9 +1,9 @@
 const path = require('path')
     , express = require('express')
-    , app = module.exports = express.createServer()
+    , app = module.exports = express()
     , port = process.env.PORT || 1337
     ;
- 
+
 /** Configuration */
 app.configure(function() {
   this.set('views', path.join(__dirname, 'views'));
@@ -29,7 +29,7 @@ app.configure('development', function(){
 app.configure('production', function(){
   this.use(express.errorHandler());
 });
- 
+
 /** Routes */
 app.get('/session-index', function (req, res, next) {
   // Increment "index" in session
@@ -164,7 +164,7 @@ sockets.on('connection', function (socket) { // New client
 
 /** Start server */
 if (!module.parent) {
-  app.listen(port, function () {
+  require('http').createServer(app).listen(port, function () {
     console.log('Listening', this.address());
   })
 }
