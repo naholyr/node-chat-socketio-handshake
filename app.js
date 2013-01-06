@@ -1,6 +1,7 @@
 const path = require('path')
     , express = require('express')
     , connect = require('express/node_modules/connect')
+    , cookie = require('express/node_modules/cookie')
     , app = express()
     , http = require('http')
     , server = http.createServer(app)
@@ -106,9 +107,12 @@ app.post("/login", function (req, res) {
 var sockets = require('socket.io').listen(server).of('/chat');
 sockets.authorization(function (handshakeData, callback) {
   // Read cookies from handshake headers
-  var cookies = parseCookie(handshakeData.headers.cookie);
+  var cookies = cookie.parse(handshakeData.headers.cookie);
   // We're now able to retrieve session ID
-  var sessionID = cookies['connect.sid'];
+  var sessionID;
+  if (cookies['connect.sid']) {
+    sessionID = connect.utils.parseSignedCookie(cookies['connect.sid'], sessionSecret);
+  }
   // No session? Refuse connection
   if (!sessionID) {
     callback('No session', false);
