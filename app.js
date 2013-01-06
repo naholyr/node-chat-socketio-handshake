@@ -164,5 +164,7 @@ sockets.on('connection', function (socket) { // New client
 
 /** Start server */
 if (!module.parent) {
-  app.listen(port)
+  app.listen(port, function () {
+    console.log('Listening', this.address());
+  })
 }
