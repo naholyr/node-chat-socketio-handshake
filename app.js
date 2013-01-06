@@ -1,5 +1,6 @@
 const path = require('path')
     , express = require('express')
+    , connect = require('express/node_modules/connect')
     , app = express()
     , http = require('http')
     , server = http.createServer(app)
@@ -106,7 +107,7 @@ app.post("/login", function (req, res) {
 
 /** WebSocket */
 var sockets = require('socket.io').listen(server).of('/chat');
-const parseCookie = require('connect').utils.parseCookie;
+const parseCookie = connect.utils.parseCookie;
 sockets.authorization(function (handshakeData, callback) {
   // Read cookies from handshake headers
   var cookies = parseCookie(handshakeData.headers.cookie);
